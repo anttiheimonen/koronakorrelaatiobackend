@@ -16,3 +16,5 @@ Kehitystilan saa käyntiin komennolla
 
 ### npm run dev
 
+Backendin osoite, jonka voi avata selaimessa,
+on localhost:8000
