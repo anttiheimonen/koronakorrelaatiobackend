@@ -1,12 +1,20 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
 const googleTrends = require('google-trends-api');
+const thlRouter = require('./controllers/thl')
+
+app.use(cors())
+
+
+app.use('/thl', thlRouter)
 
 console.log('hello world')
 
 const PORT = 8000
 
 app.get('/', (req, res) => {
+  console.log("pyyntö tullut");
   res.send('<h1>palvelin on käynnissä</h1>')
 
 })
