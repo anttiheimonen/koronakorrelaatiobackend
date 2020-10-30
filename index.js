@@ -21,12 +21,12 @@ app.get('/gtrends/', (req, res) => {
   googleTrends.interestByRegion
     ({
       keyword: hakusana,
-      startTime: new Date('2020-08-08'),
-      endTime: new Date('2020-10-25'),
+      trendDate: new Date(Date.now()- (14*24*60*60*1000)),
+      //startTime: new Date('2020-08-08'),
+      //endTime: new Date('2020-10-25'),
       geo: 'FI',
       resolution: 'city'
     })
-    //keyword: document.getElementById("Hakukenttä").value})
     .then(function (res) {
       var receivedData = res.toString()
       receivedData = JSON.parse(receivedData)
