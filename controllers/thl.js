@@ -1,5 +1,4 @@
 const { response } = require('express')
-
 const thlRouter = require('express').Router()
 
 // thl.js sisältää toiminnallisuuden THL:n dataan liittyviin pyyntöihin.
