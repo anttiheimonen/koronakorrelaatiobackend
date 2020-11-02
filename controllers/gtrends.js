@@ -19,15 +19,16 @@ gtrendsRouter.get('/', async (req, res) => {
       geo: 'FI',
       resolution: 'city'
     })
-    .then(function (res) {
-      var receivedData = res.toString()
+    .then(function (googleRes) {
+      var receivedData = googleRes.toString()
       receivedData = JSON.parse(receivedData)
       console.log(receivedData);
+      res.json(receivedData)
     })
     .catch((err) => {
       console.log(err);
     });
-  res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
+  // res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
 })
 
 module.exports = gtrendsRouter
