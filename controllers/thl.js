@@ -2,6 +2,7 @@ const thlRouter = require('express').Router()
 const JSONstat = require("jsonstat-toolkit");
 const thlData = require('./../testdata.json'); // Lokaali THL-tiedosto testausta varten
 const thlDataArrobj = require('./../test_arrobj.json'); // Lokaali THL-tiedosto testausta varten
+const kuntakoodit = require('./../utility/luettelo.json')
 
 var _ = require('lodash')
 
@@ -74,6 +75,7 @@ thlRouter.get('/lokaalitesti', async (req, res) => {
   // Reduce käy jokaisen viikko-objektin läpi ja lisää datan
   // meidän haluamassa muodossa finaldata objektiin.
   let finaldata = testiDataArrobj.reduce(muunnaDataArrobj, {})
+  // console.log(kuntakoodit.Alajarvi.koodi);
 
   // Palautetaan pyytäjälle data JSON-muodossa
   res.json(finaldata)
@@ -105,7 +107,13 @@ const muunnaDataArrobj = (edelliset, viikkodata) => {
 
   // THL:n datassa 0 arvot on merkattu ". .". Korvataan nämä nollilla
   Object.keys(viikkodata).forEach(key => {
-    viikkodata[key] = isNaN(viikkodata[key]) ? 0 : viikkodata[key]
+    if (kuntakoodit[key]) {
+      viikkodata[kuntakoodit[key].koodi] =
+        viikkodata[key] = isNaN(viikkodata[key]) ? 0 : viikkodata[key];
+      delete viikkodata[key];
+    }
+    else
+      console.log(`Kunta ${key} ei löydy kuntalistasta!`);
   });
 
   // Yhistetään luotu viikkodata aikaisempiin
