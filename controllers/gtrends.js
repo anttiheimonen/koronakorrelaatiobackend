@@ -1,10 +1,9 @@
 const { response } = require('express');
 const googleTrends = require('google-trends-api');
 const gtrendsRouter = require('express').Router();
-const kuntakoodit = require('./..utility/luettelo.json');
 
 
-gtrendsRouter.get('/', async (req, res) => {
+gtrendsRouter.get('/interestOverTime', async (req, res) => {
   // Otetaan osoitteen mukana tuleeet arvot muuttujiin
   // esim. localhost:8000/gtrends?kunta=turku&hakusana=kissa
   const kunta = req.query.kunta
