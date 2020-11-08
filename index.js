@@ -8,9 +8,7 @@ app.use(cors())
 app.use('/thl', thlRouter)
 app.use('/gtrends', gtrendsRouter)
 
-const PORT = 8000
-
-console.log('Palvelin kæynnissä')
+const PORT = process.env.PORT || 8000
 
 app.get('/', (req, res) => {
   console.log("pyyntö tullut");
