@@ -3,9 +3,20 @@ const googleTrends = require('google-trends-api');
 const gtrendsRouter = require('express').Router();
 
 
+/* interestOverTime kertoo millä alueella hakusana on kaikkein haetuin
+  (eli suurin prosentuaalinen osuus aluuen kaikista hakusanoista).
+  Tämän kunnan arvo on 100.
+  Muiden kuntien tulokset ovat suhteellisia tähän numeroon.
+  Esim. Toisessa kunnassa arvo 50 tarkoittaisi, että hakua on tehty 
+  prosentuaalisesti puolet vähemmän.
+  
+  Haun voi tehdä halutulle ajan jaksolla, mutta tästä ei näe 
+  kehitystä ajan kansa.
+*/
+
 gtrendsRouter.get('/interestOverTime', async (req, res) => {
   // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // esim. localhost:8000/gtrends?kunta=turku&hakusana=kissa
+  // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
   const kunta = req.query.kunta
   const hakusana = req.query.hakusana
 
@@ -14,8 +25,8 @@ gtrendsRouter.get('/interestOverTime', async (req, res) => {
     ({
       keyword: hakusana,
       //trendDate: new Date(Date.now() - (14 * 24 * 60 * 60 * 1000)),
-      //startTime: new Date('2020-08-08'),
-      //endTime: new Date('2020-10-25'),
+      startTime: new Date('2020-08-08'),
+      endTime: new Date('2020-10-25'),
       geo: 'FI',
       resolution: 'city',
     })
