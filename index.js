@@ -5,6 +5,7 @@ const thlRouter = require('./controllers/thl')
 const gtrendsRouter = require('./controllers/gtrends')
 
 app.use(cors())
+app.use(express.static('build'))
 app.use('/thl', thlRouter)
 app.use('/gtrends', gtrendsRouter)
 
