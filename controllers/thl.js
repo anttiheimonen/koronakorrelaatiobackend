@@ -46,6 +46,7 @@ thlRouter.get('/lokaalitesti', async (req, res) => {
 
   // Ottaa testidatasta kopion, jottei alkuperäistä käsitellä useaan kertaan
   let testiDataArrobj = _.cloneDeep(thlDataArrobj)
+  console.log(`Datan koko: ${testiDataArrobj.length}`)
 
   // Käsiteltävä data on lista, jossa jokainen viikko on omana objektinaan.
   // Jokainen viikko-objekti sisältää tiedon viikosta, turhan measure-kentän
