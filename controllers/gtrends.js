@@ -3,10 +3,23 @@ const googleTrends = require('google-trends-api');
 const gtrendsRouter = require('express').Router();
 const kuntakoodit = require('./../utility/luettelo.json');
 
-//TÄMÄ SE EDELLINEN TOIMIVA KOODI!
-/* gtrendsRouter.get('/', async (req, res) => {
+
+/* interestOverTime kertoo millä alueella hakusana on kaikkein haetuin
+  (eli suurin prosentuaalinen osuus aluuen kaikista hakusanoista).
+  Tämän kunnan arvo on 100.
+  Muiden kuntien tulokset ovat suhteellisia tähän numeroon.
+  Esim. Toisessa kunnassa arvo 50 tarkoittaisi, että hakua on tehty 
+  prosentuaalisesti puolet vähemmän.
+  
+  Haun voi tehdä halutulle ajan jaksolla, mutta tästä ei näe 
+  kehitystä ajan kansa.
+*/
+
+//Tää on se edellinen versio koodista!
+/*
+gtrendsRouter.get('/interestOverTime', async (req, res) => {
   // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // esim. localhost:8000/gtrends?kunta=turku&hakusana=kissa
+  // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
   const kunta = req.query.kunta
   const hakusana = req.query.hakusana
 
@@ -37,7 +50,7 @@ const kuntakoodit = require('./../utility/luettelo.json');
 //Ei vielä yhdisty kunnat ja koodit luettelo.json tiedostosta
 gtrendsRouter.get('/', async (req, res) => {
   // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // esim. localhost:8000/gtrends?kunta=turku&hakusana=kissa
+  // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
   const kunta = req.query.kunta
   const hakusana = req.query.hakusana
 
