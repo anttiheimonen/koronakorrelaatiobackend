@@ -2,6 +2,7 @@ const { response } = require('express');
 const googleTrends = require('google-trends-api');
 const gtrendsRouter = require('express').Router();
 const kuntakoodit = require('./../utility/luettelo.json');
+const gtrendsKunnat = require('./../utility/gtrendsKunnat.json');
 
 
 /* interestOverTime kertoo millä alueella hakusana on kaikkein haetuin
@@ -12,50 +13,25 @@ const kuntakoodit = require('./../utility/luettelo.json');
   prosentuaalisesti puolet vähemmän.
   
   Haun voi tehdä halutulle ajan jaksolla, mutta tästä ei näe 
-  kehitystä ajan kansa.
+  kehitystä ajan kansa, vaan jokaiselle kunnalle on vain yksi arvo.
 */
 
-//Tää on se edellinen versio koodista!
-/*
-gtrendsRouter.get('/interestOverTime', async (req, res) => {
-  // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
-  const kunta = req.query.kunta
-  const hakusana = req.query.hakusana
 
-  console.log(hakusana);
-  googleTrends.interestByRegion
-    ({
-      keyword: hakusana,
-      //trendDate: new Date(Date.now() - (14 * 24 * 60 * 60 * 1000)),
-      startTime: new Date('2020-08-08'),
-      endTime: new Date('2020-10-25'),
-      geo: 'FI',
-      resolution: 'city'
-    })
-    .then(function (googleRes) {
-      var receivedData = googleRes.toString()
-      receivedData = JSON.parse(receivedData)
-      console.log(receivedData)
-      res.json(receivedData)
-    })
-    .catch((err) => {
-      console.log(err)
-    });
-  // res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
-})
-*/
-
-//Tämä kokeilu ainakin jotenkin tulostaa vain sen kaupungin ja valuen arvon.
-//Ei vielä yhdisty kunnat ja koodit luettelo.json tiedostosta
+// Palauttaa hakusanan trendauksen Suomesta.
+// Palautettava data on muotoa
+// {
+//   area211: 100,
+//   area740: 97,
+//   area851: 0, 
+// }
 gtrendsRouter.get('/', async (req, res) => {
-  // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
+  // Otetaan osoitteen mukana tuleeet arvot muuttujiin. Osoite on esim:
+  // http://localhost:8000/gtrends?hakusana=korona&alkupvm=2020-05-01&loppupvm=2020-11-13
   const hakusana = req.query.hakusana;
   const alkupvm = req.query.alkupvm;
   const loppupvm = req.query.loppupvm; 
 
-  console.log(hakusana);
+  console.log(`hakusana ${hakusana}`);
   googleTrends.interestByRegion
     ({
       keyword: hakusana,
@@ -65,21 +41,16 @@ gtrendsRouter.get('/', async (req, res) => {
       resolution: 'city'
     })
     .then(function (googleRes) {
-      var receivedData = googleRes.toString()
-      let dataJSON = {}
-      receivedData = JSON.parse(receivedData).default
-        // let valmisData = [];
-        var i;
-        for(i = 0; i < receivedData.geoMapData.length; i++) {
-          var geoName = receivedData.geoMapData[i].geoName;
-          var value = receivedData.geoMapData[i].value;
-          // valmisData += [geoName + " : " + value + ", "].join(",");
-          dataJSON[geoName] = value[0]
-          console.log(receivedData.geoMapData[i]);
-
+      let trendsTulokset = JSON.parse(googleRes).default.geoMapData
+      let tuloksetKunnittain = {}
+        for(let i = 0; i < trendsTulokset.length; i++) {
+          let kuntanimi = trendsTulokset[i].geoName;
+          let arvo = trendsTulokset[i].value;
+          let kuntakoodi = haeKuntakoodi(kuntanimi)
+          if (kuntakoodi)
+            tuloksetKunnittain[kuntakoodi] = arvo[0]
         }
-      //  console.log(valmisData)
-       res.json(dataJSON)
+       res.json(tuloksetKunnittain)
     })
     .catch((err) => {
       console.log(err)
@@ -115,5 +86,26 @@ gtrendsRouter.get('/', async (req, res) => {
   // res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
 })
 */
+
+
+// Etsii kuntakoodin. Etsimisjärjestys on ensiksi kuntakoodit,
+// toisena gtrendsKuntakoodit. Jos koodia ei löydy, niin palauttaa null.
+const haeKuntakoodi = (kuntanimi) => {
+  if (kuntakoodit[kuntanimi]) 
+    return kuntakoodit[kuntanimi].koodi
+  if (gtrendsKunnat[kuntanimi]) 
+    return gtrendsKunnat[kuntanimi].koodi
+  
+  return null
+} 
+
+/* 
+Puuttuvat kunnat
+
+Kiiminki - Yhdistynyt Ouluun
+Haukipudas - Yhdistynyt Ouluun
+*/
+
+
 
 module.exports = gtrendsRouter
