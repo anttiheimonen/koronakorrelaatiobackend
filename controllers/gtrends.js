@@ -59,23 +59,27 @@ gtrendsRouter.get('/', async (req, res) => {
   googleTrends.interestByRegion
     ({
       keyword: hakusana,
-      startTime: alkupvm,
-      endTime: loppupvm,
+      startTime: new Date(alkupvm),
+      endTime: new Date(loppupvm),
       geo: 'FI',
       resolution: 'city'
     })
     .then(function (googleRes) {
       var receivedData = googleRes.toString()
-      receivedData = JSON.parse(receivedData)
-        let valmisData = [];
+      let dataJSON = {}
+      receivedData = JSON.parse(receivedData).default
+        // let valmisData = [];
         var i;
-        for(i = 0; i < receivedData.default.geoMapData.length; i++) {
-          var geoName = receivedData.default.geoMapData[i].geoName;
-          var value = receivedData.default.geoMapData[i].value;
-          valmisData += [geoName + " : " + value + ", "].join(",");
+        for(i = 0; i < receivedData.geoMapData.length; i++) {
+          var geoName = receivedData.geoMapData[i].geoName;
+          var value = receivedData.geoMapData[i].value;
+          // valmisData += [geoName + " : " + value + ", "].join(",");
+          dataJSON[geoName] = value[0]
+          console.log(receivedData.geoMapData[i]);
+
         }
-       console.log(valmisData)
-       res.json(valmisData)
+      //  console.log(valmisData)
+       res.json(dataJSON)
     })
     .catch((err) => {
       console.log(err)
