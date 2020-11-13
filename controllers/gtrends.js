@@ -51,16 +51,16 @@ gtrendsRouter.get('/interestOverTime', async (req, res) => {
 gtrendsRouter.get('/', async (req, res) => {
   // Otetaan osoitteen mukana tuleeet arvot muuttujiin
   // http://localhost:8000/gtrends/interestOverTime?hakusana=korona
-  const kunta = req.query.kunta
-  const hakusana = req.query.hakusana
+  const hakusana = req.query.hakusana;
+  const alkupvm = req.query.alkupvm;
+  const loppupvm = req.query.loppupvm; 
 
   console.log(hakusana);
   googleTrends.interestByRegion
     ({
       keyword: hakusana,
-      //trendDate: new Date(Date.now() - (14 * 24 * 60 * 60 * 1000)),
-      startTime: new Date('2019-10-25'),
-      endTime: new Date(Date.now()),
+      startTime: alkupvm,
+      endTime: loppupvm,
       geo: 'FI',
       resolution: 'city'
     })
