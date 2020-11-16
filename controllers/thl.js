@@ -18,7 +18,7 @@ thlRouter.get('/', async (req, res) => {
 
 
 // Hakee THL:n datan ja muokkaa sen helpommin käsiteltäväksi objektiksi
-thlRouter.get('/thldata', async (req, res) => {
+thlRouter.get('/thldata', async (req, res, next) => {
   JSONstat(kunnatViikottain).then(function (j) {
     if (j.length) {
       let ds1 = j.Dataset(0);
@@ -33,10 +33,11 @@ thlRouter.get('/thldata', async (req, res) => {
       // console.log(rows[2]);
       res.json(rows)
     }
-  })
+  }).catch(next)
 })
 
 
+// Esimerkkifunktio virheen käsittelystä
 thlRouter.get('/testi', async (req, res, next) => {
   JSONstat("https://samppppppppppo.thl.fi/pivot/pr").then(function (j) {
     if (j.error) {
