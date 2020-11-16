@@ -3,11 +3,13 @@ const app = express()
 const cors = require('cors');
 const thlRouter = require('./controllers/thl')
 const gtrendsRouter = require('./controllers/gtrends')
+const errorHandler = require('./utility/errorHandler')
 
 app.use(cors())
 app.use(express.static('build'))
 app.use('/thl', thlRouter)
 app.use('/gtrends', gtrendsRouter)
+app.use(errorHandler.errorHandler)
 
 const PORT = process.env.PORT || 8000
 

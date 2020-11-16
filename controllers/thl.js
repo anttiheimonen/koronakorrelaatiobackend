@@ -18,7 +18,7 @@ thlRouter.get('/', async (req, res) => {
 
 
 // Hakee THL:n datan ja muokkaa sen helpommin käsiteltäväksi objektiksi
-thlRouter.get('/testi', async (req, res) => {
+thlRouter.get('/thldata', async (req, res) => {
   JSONstat(kunnatViikottain).then(function (j) {
     if (j.length) {
       let ds1 = j.Dataset(0);
@@ -30,10 +30,22 @@ thlRouter.get('/testi', async (req, res) => {
         field: "label"
       });
       // res.json(thlData)
-      console.log(rows[2]);
+      // console.log(rows[2]);
       res.json(rows)
     }
   })
+})
+
+
+thlRouter.get('/testi', async (req, res, next) => {
+  JSONstat("https://samppppppppppo.thl.fi/pivot/pr").then(function (j) {
+    if (j.error) {
+      console.log("VIRHE");
+      res.json(j)
+    } else {
+      res.send('<h1>virhesivu!</h1>')
+    }
+  }).catch(next)
 })
 
 
