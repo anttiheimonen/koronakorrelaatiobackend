@@ -17,21 +17,21 @@ thlRouter.get('/', async (req, res) => {
 })
 
 
-// Hakee THL:n datan ja muokkaa sen helpommin käsiteltäväksi objektiksi
+// Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
+// palautettavaksi
 thlRouter.get('/thldata', async (req, res, next) => {
   JSONstat(kunnatViikottain).then(function (j) {
     if (j.length) {
-      let ds1 = j.Dataset(0);
-      // let dimhcd = ds1.Dimension("hcdmunicipality2020");
-      let rows = ds1.toTable({
+      // Luo JSONstat-olion avulla datan sisältävä arrobj
+      let rows = j.Dataset(0).toTable({
         type: "arrobj",
         by: "hcdmunicipality2020",
         bylabel: true,
         field: "label"
       });
-      // res.json(thlData)
-      // console.log(rows[2]);
-      res.json(rows)
+      // Luo json-muotoinen data arrobjektista
+      let finaldata = rows.reduce(muunnaDataArrobj, {})
+      res.json(finaldata)
     }
   }).catch(next)
 })
