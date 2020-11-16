@@ -122,41 +122,4 @@ const muunnaDataArrobj = (edelliset, viikkodata) => {
 }
 
 
-/*
-VANHA. Ei ehkä enää käyttöä
-
-//  Data on muotoa:
-//   [
-//     "Vuosi 2020 Viikko 42",
-//     "Jyväskylä",
-//     "Tapausten lukumäärä",
-//     "65"
-//   ]
-
-const muunnaData = data => {
-  let aikaKentanSanat = data[0].split(' ')
-  let vuosi = aikaKentanSanat[1]
-  let viikko = aikaKentanSanat[3]
-  let kaupunki = data[1]
-  // data[3] sisältää tapausten määrän, jos se ei ole numero, niin asetetaan 0
-  let tapaustenLkm = isNaN(data[3]) ? 0 : data[3]
-  console.log(vuosi);
-  console.log(viikko);
-  console.log(kaupunki);
-  console.log(tapaustenLkm);
-
-  let rivi = {
-    [vuosi]: {
-      [viikko]: {
-        [kaupunki]: [tapaustenLkm]
-      }
-    }
-  }
-  // rivi[vuosi][kuukausi][kaupunki] = tapaustenLkm
-  console.log(rivi);
-  return rivi
-}
-*/
-
-
 module.exports = thlRouter
