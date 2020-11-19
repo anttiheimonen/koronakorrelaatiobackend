@@ -51,6 +51,9 @@ gtrendsRouter.get('/', async (req, res) => {
             tuloksetKunnittain[kuntakoodi] = arvo[0]
         }
        res.json(tuloksetKunnittain)
+       if (tarkistaOnkoTyhja(tuloksetKunnittain)) {
+         console.log("Ei hakutuloksia!")
+       }
     })
     .catch((err) => {
       console.log(err)
@@ -106,6 +109,25 @@ Kiiminki - Yhdistynyt Ouluun
 Haukipudas - Yhdistynyt Ouluun
 */
 
+// Tarkistaa onko tuloksetKunnittain tyhjä vai löytyykö hakuja
+const tarkistaOnkoTyhja = (tuloksetKunnittain) => {
+  for (var key in tuloksetKunnittain) {
+    if(tuloksetKunnittain.hasOwnProperty(key))
+      return false;
+  }
+  return true;
+}
+
+gtrendsRouter.get('/testi', async (req, res, next) => {
+  JSONstat('google-trends-api').then(function(j) {
+    if(j.error) {
+      console.log("VIRHE");
+      res.json(j)
+    } else {
+      res.send('<h1>virhesivu!</h1>')
+    }
+  }).catch(next)
+});
 
 
 module.exports = gtrendsRouter
