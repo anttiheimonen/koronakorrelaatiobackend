@@ -11,15 +11,40 @@ const shptViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/f
 
 
 // thl.js sisältää toiminnallisuuden THL:n dataan liittyviin pyyntöihin.
-
 thlRouter.get('/', async (req, res) => {
   res.json(thlData)
 })
 
+var nyt = new Date();
+var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
+if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
+  haeData += 46400000; 
+}
+setTimeout(
+  // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
+  // palautettavaksi
+  thlRouter.get('/thldata', async (req, res, next) => {  
+    JSONstat(kunnatViikottain).then(function (j) {
+      if (j.length) {
+        // Luo JSONstat-olion avulla datan sisältävä arrobj
+        let rows = j.Dataset(0).toTable({
+          type: "arrobj",
+          by: "hcdmunicipality2020",
+          bylabel: true,
+          field: "label"
+        });
+        // Luo json-muotoinen data arrobjektista   
+        let finaldata = rows.reduce(muunnaDataArrobj, {})
+        res.json(finaldata)        
+        console.log(`${nyt}`, "Päivitystesti 2");
+      }
+    }).catch(next)
+  }), haeData);
+
 
 // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
 // palautettavaksi
-thlRouter.get('/thldata', async (req, res, next) => {
+/* thlRouter.get('/thldata', async (req, res, next) => {
   JSONstat(kunnatViikottain).then(function (j) {
     if (j.length) {
       // Luo JSONstat-olion avulla datan sisältävä arrobj
@@ -34,8 +59,7 @@ thlRouter.get('/thldata', async (req, res, next) => {
       res.json(finaldata)
     }
   }).catch(next)
-})
-
+}) */
 
 // Esimerkkifunktio virheen käsittelystä
 thlRouter.get('/testi', async (req, res, next) => {
