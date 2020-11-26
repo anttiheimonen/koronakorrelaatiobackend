@@ -9,18 +9,61 @@ var _ = require('lodash')
 const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443686&row=hcdmunicipality2020-445171L&column=measure-444833"
 const shptViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json"
 
+let viimeksiPaivitetty = 0;
+const paivitysVali = 20000; // Millisekunteina, eli 1000 ms = 1 sek
 
 // thl.js sisältää toiminnallisuuden THL:n dataan liittyviin pyyntöihin.
 thlRouter.get('/', async (req, res) => {
   res.json(thlData)
 })
 
-var nyt = new Date();
-var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
-if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
-  haeData += 46400000; 
+
+// Testi osoite datan päivitysajan laskemiseen. Tämän tapaista voisi käyttää
+// thldata funktiossa: Jos data on vanha, haetaan THL:ltä ja tallennetaan tiedostoon.
+// Muuten haetaan vain tiedostosta.
+thlRouter.get('/paivitys', async (req, res) => {
+  let nyt = Date.now();  // Nykyinen aika millisekunteina
+  let viesti = "";
+  if ((nyt - paivitysVali) > viimeksiPaivitetty) {
+    viesti = "Data on vanhentunut, päivitetään"
+    viimeksiPaivitetty = Date.now()
+  }
+  else {
+    viesti = "Data ei ole liian vanha"
+  }
+  console.log(viesti);
+  res.send(viesti)
+})
+
+
+function paivitaThlData() {
+  JSONstat(kunnatViikottain).then(function (j) {
+    if (j.length) {
+      // Luo JSONstat-olion avulla datan sisältävä arrobj
+      let rows = j.Dataset(0).toTable({
+        type: "arrobj",
+        by: "hcdmunicipality2020",
+        bylabel: true,
+        field: "label"
+      });
+      // Luo json-muotoinen data arrobjektista   
+      let finaldata = rows.reduce(muunnaDataArrobj, {})
+      // res.json(finaldata) 
+      console.log(finaldata);       
+      console.log(`${nyt}`, "Päivitystesti erillisestä funktiosta");
+    }
+  })
 }
-setTimeout(
+
+
+
+var nyt = new Date();
+// var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
+// if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
+//   haeData += 46400000; 
+// }
+// setTimeout(
+  
   // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
   // palautettavaksi
   thlRouter.get('/thldata', async (req, res, next) => {  
@@ -35,11 +78,16 @@ setTimeout(
         });
         // Luo json-muotoinen data arrobjektista   
         let finaldata = rows.reduce(muunnaDataArrobj, {})
-        res.json(finaldata)        
         console.log(`${nyt}`, "Päivitystesti 2");
+        res.json(finaldata)        
       }
     }).catch(next)
-  }), haeData);
+  })
+  
+  // , haeData);
+
+
+
 
 
 // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
