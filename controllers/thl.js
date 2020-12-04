@@ -10,7 +10,7 @@ const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case
 const shptViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json"
 
 let viimeksiPaivitetty = 0;
-const paivitysVali = 20000; // Millisekunteina, eli 1000 ms = 1 sek
+const paivitysVali = 7200000; // Päivitys 2h välein - Millisekunteina, eli 1000 ms = 1 sek
 var paivitettyThlData;
 
 
