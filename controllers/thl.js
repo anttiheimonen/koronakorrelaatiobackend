@@ -11,6 +11,8 @@ const shptViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/f
 
 let viimeksiPaivitetty = 0;
 const paivitysVali = 20000; // Millisekunteina, eli 1000 ms = 1 sek
+var paivitettyThlData;
+
 
 // thl.js sisältää toiminnallisuuden THL:n dataan liittyviin pyyntöihin.
 thlRouter.get('/', async (req, res) => {
@@ -56,7 +58,6 @@ function paivitaThlData() {
 }
 
 
-
 var nyt = new Date();
 // var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
 // if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
@@ -79,7 +80,8 @@ var nyt = new Date();
         // Luo json-muotoinen data arrobjektista   
         let finaldata = rows.reduce(muunnaDataArrobj, {})
         console.log(`${nyt}`, "Päivitystesti 2");
-        res.json(finaldata)        
+        res.json(finaldata)
+        finaldata = paivitettyThlData;
       }
     }).catch(next)
   })
