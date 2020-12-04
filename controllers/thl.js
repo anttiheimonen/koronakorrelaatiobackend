@@ -58,16 +58,24 @@ function paivitaThlData() {
 }
 
 
-var nyt = new Date();
+
 // var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
 // if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
 //   haeData += 46400000; 
 // }
 // setTimeout(
   
-  // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
-  // palautettavaksi
-  thlRouter.get('/thldata', async (req, res, next) => {  
+// Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
+// palautettavaksi
+thlRouter.get('/thldata', async (req, res, next) => {  
+  let nyt = Date.now(); 
+  if ((nyt - paivitysVali) < viimeksiPaivitetty) {
+    console.log(nyt - paivitysVali);
+    console.log("THL data ei ole vanhentunut. Käytetään muistissa olevaa");
+    res.json(paivitettyThlData)
+  }
+  else{
+    console.log("THL data on vanhentunut. Päivitetään...");
     JSONstat(kunnatViikottain).then(function (j) {
       if (j.length) {
         // Luo JSONstat-olion avulla datan sisältävä arrobj
@@ -79,12 +87,13 @@ var nyt = new Date();
         });
         // Luo json-muotoinen data arrobjektista   
         let finaldata = rows.reduce(muunnaDataArrobj, {})
-        console.log(`${nyt}`, "Päivitystesti 2");
+        paivitettyThlData = finaldata;
+        viimeksiPaivitetty = nyt;
         res.json(finaldata)
-        finaldata = paivitettyThlData;
       }
     }).catch(next)
-  })
+  }
+})
   
   // , haeData);
 
