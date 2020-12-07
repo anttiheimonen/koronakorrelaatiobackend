@@ -5,6 +5,16 @@ const thlRouter = require('./controllers/thl')
 const gtrendsRouter = require('./controllers/gtrends')
 const errorHandler = require('./utility/errorHandler')
 
+
+/*
+© Authors:
+Antti Heimonen
+Maria Kangas
+Konsta Kalliokoski
+Vilma Patama
+*/
+
+
 app.use(cors())
 app.use(express.static('build'))
 app.use('/thl', thlRouter)

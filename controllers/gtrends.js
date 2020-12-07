@@ -4,18 +4,27 @@ const gtrendsRouter = require('express').Router();
 const kuntakoodit = require('./../utility/luettelo.json');
 const gtrendsKunnat = require('./../utility/gtrendsKunnat.json');
 
-
-/* interestOverTime kertoo millä alueella hakusana on kaikkein haetuin
-  (eli suurin prosentuaalinen osuus aluuen kaikista hakusanoista).
-  Tämän kunnan arvo on 100.
-  Muiden kuntien tulokset ovat suhteellisia tähän numeroon.
-  Esim. Toisessa kunnassa arvo 50 tarkoittaisi, että hakua on tehty 
-  prosentuaalisesti puolet vähemmän.
-  
-  Haun voi tehdä halutulle ajan jaksolla, mutta tästä ei näe 
-  kehitystä ajan kansa, vaan jokaiselle kunnalle on vain yksi arvo.
+/*
+© Authors:
+Antti Heimonen
+Maria Kangas
+Konsta Kalliokoski
+Vilma Patama
 */
 
+/*
+  Google Trendsin interestOverTime kertoo millä alueella hakusana on kaikkein haetuin 
+  (eli suurin prosentuaalinen osuus aluuen kaikista hakusanoista).
+  Tämän kunnan arvo on 100. 
+  Muiden kuntien tulokset ovat suhteellisia tähän numeroon.
+  Esim. Toisessa kunnassa arvo 50 tarkoittaisi, että hakua on tehty 
+  prosentuaalisesti puolet vähemmän. 
+
+  Haun voi tehdä halutulle ajan jaksolla, mutta tästä ei näe 
+  kehitystä ajan kanssa, vaan jokaiselle kunnalle on vain yksi arvo.
+*/
+
+var trendsHakujenMaara = 0;
 
 // Palauttaa hakusanan trendauksen Suomesta.
 // Palautettava data on muotoa
@@ -29,9 +38,16 @@ gtrendsRouter.get('/', async (req, res) => {
   // http://localhost:8000/gtrends?hakusana=korona&alkupvm=2020-05-01&loppupvm=2020-11-13
   const hakusana = req.query.hakusana;
   const alkupvm = req.query.alkupvm;
-  const loppupvm = req.query.loppupvm; 
-
-  console.log(`hakusana ${hakusana}`);
+  const loppupvm = req.query.loppupvm;
+ 
+  console.log(`hakusana ${hakusana}`); 
+  trendsHakujenMaara += 1;
+  if (trendsHakujenMaara > 1000) {
+    console.log('Liikaa hakuja, nollataan laskuri');
+    trendsHakujenMaara = 0;
+  }  
+  console.log(`Hakuja tehty: ${trendsHakujenMaara}`);
+  
   googleTrends.interestByRegion
     ({
       keyword: hakusana,
@@ -58,37 +74,7 @@ gtrendsRouter.get('/', async (req, res) => {
     .catch((err) => {
       console.log(err)
     });
-  // res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
 })
-
-
-/* gtrendsRouter.get('/', async (req, res) => {
-  // Otetaan osoitteen mukana tuleeet arvot muuttujiin
-  // esim. localhost:8000/gtrends?kunta=turku&hakusana=kissa
-  const kunta = req.query.kunta
-  const hakusana = req.query.hakusana
-
-  console.log(hakusana);
-  googleTrends.interestOverTime
-    ({
-      keyword: hakusana,
-      startTime: new Date(Date.now() - (14 * 24 * 60 * 60 * 1000)),
-      //startTime: new Date('2020-08-08'),
-      //endTime: new Date('2020-10-25'),
-      geo: 'FI'
-    })
-    .then(function (googleRes) {
-      var receivedData = googleRes.toString()
-      receivedData = JSON.parse(receivedData)
-      console.log(receivedData)
-      res.json(receivedData)
-    })
-    .catch((err) => {
-      console.log(err)
-    });
-  // res.send('<h1>Pyysit kuntaa: ' + kunta + ' ' + hakusana + '!</h1>')
-})
-*/
 
 
 // Etsii kuntakoodin. Etsimisjärjestys on ensiksi kuntakoodit,

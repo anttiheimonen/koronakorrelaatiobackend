@@ -4,6 +4,19 @@ const thlData = require('./../testdata.json'); // Lokaali THL-tiedosto testausta
 const thlDataArrobj = require('./../test_arrobj.json'); // Lokaali THL-tiedosto testausta varten
 const kuntakoodit = require('./../utility/luettelo.json')
 
+/*
+© Authors:
+Antti Heimonen
+Maria Kangas
+Konsta Kalliokoski
+Vilma Patama
+*/
+
+/*
+Hakee Terveyden ja hyvinvoinnin laitoksen eli THL:n tarjoaman datan koronatartuntojen määrästä paikkakunnittain kahden tunnin välein.
+*/
+
+
 var _ = require('lodash')
 
 const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443686&row=hcdmunicipality2020-445171L&column=measure-444833"
@@ -57,13 +70,6 @@ function paivitaThlData() {
   })
 }
 
-
-
-// var haeData = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate(), 12, 0, 0, 0) - nyt;
-// if (haeData < 0) console.log(`${nyt}`, "Päivitystesti 1"); {
-//   haeData += 46400000; 
-// }
-// setTimeout(
   
 // Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
 // palautettavaksi
@@ -94,31 +100,7 @@ thlRouter.get('/thldata', async (req, res, next) => {
     }).catch(next)
   }
 })
-  
-  // , haeData);
 
-
-
-
-
-// Hakee ajantasaisen THL:n koronadatan ja muokkaa sen json-muotoon
-// palautettavaksi
-/* thlRouter.get('/thldata', async (req, res, next) => {
-  JSONstat(kunnatViikottain).then(function (j) {
-    if (j.length) {
-      // Luo JSONstat-olion avulla datan sisältävä arrobj
-      let rows = j.Dataset(0).toTable({
-        type: "arrobj",
-        by: "hcdmunicipality2020",
-        bylabel: true,
-        field: "label"
-      });
-      // Luo json-muotoinen data arrobjektista
-      let finaldata = rows.reduce(muunnaDataArrobj, {})
-      res.json(finaldata)
-    }
-  }).catch(next)
-}) */
 
 // Esimerkkifunktio virheen käsittelystä
 thlRouter.get('/testi', async (req, res, next) => {
