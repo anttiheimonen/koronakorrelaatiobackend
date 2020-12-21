@@ -19,7 +19,8 @@ Hakee Terveyden ja hyvinvoinnin laitoksen eli THL:n tarjoaman datan koronatartun
 
 var _ = require('lodash')
 
-const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443686&row=hcdmunicipality2020-445171L&column=measure-444833"
+const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek20200101-509030&row=hcdmunicipality2020-445171L&column=measure-444833"
+// const kunnatViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=dateweek2020010120201231-443686&row=hcdmunicipality2020-445171L&column=measure-444833"  // Vanha toimiva osoite ennen THL:n 21.12.2020 tekemää rakennemuutosta
 const shptViikottain = "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json"
 
 let viimeksiPaivitetty = 0;
@@ -164,7 +165,7 @@ thlRouter.get('/lokaalitesti', async (req, res) => {
 // Osa THL-datan muutonprosessia
 const muunnaDataArrobj = (edelliset, viikkodata) => {
   // Otetaan aikakentästä vuosi ja kuukausi erikseen
-  let aikaKentanSanat = viikkodata.dateweek2020010120201231.split(' ')
+  let aikaKentanSanat = viikkodata.dateweek20200101.split(' ')
   let vuosi = aikaKentanSanat[1]
   let viikko = aikaKentanSanat[3]
 
@@ -175,7 +176,7 @@ const muunnaDataArrobj = (edelliset, viikkodata) => {
 
   // Tuhotaan dateweek2020010120201231 ja measure-kentät.
   // Muuten niitä kohdellaan samoin kuin kuntia.
-  delete viikkodata.dateweek2020010120201231
+  delete viikkodata.dateweek20200101
   delete viikkodata.measure
 
   let jsonViikko = {
